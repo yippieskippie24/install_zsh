@@ -99,7 +99,7 @@ function ROOT_CHECK() {
                    if [[ $(dpkg-query -s sudo) ]];then
                        export SUDO="sudo"
                    else
-                       echo "Please install sudo or run this as root."
+                       whiptail --msgbox "Not run as root and sudo not installed. Please run as root or install sudo." --ok-button "Exit" 7 32 3>&1 1>&2 2>&3
                        exit 1
                    fi
                fi
