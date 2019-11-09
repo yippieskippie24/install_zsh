@@ -6,7 +6,7 @@
 #                                                         #
 #     This script allows a user to quickly install        #
 #      ZSH, Oh My ZSH, and modify a few other shell       #
-#                      configurations.                    #
+#                configurations on Ubuntu.                #
 #                                                         #
 #              Written by:  Tyler M Johnson               #
 #           https://github.com/yippieskippie24            #
