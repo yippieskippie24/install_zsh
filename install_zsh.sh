@@ -53,7 +53,7 @@ function CHECK_ZSH() {
             if [ $(dpkg-query -W -f='${Status}' zsh 2>/dev/null | grep -c "ok installed") -eq 0 ];
             then
               (whiptail --msgbox "ZSH needs to be installed." --ok-button "Continue" 7 32 3>&1 1>&2 2>&3); 
-           apt update && apt install zsh -y
+           $SUDO apt update && apt install zsh -y
            INSTALL_PROMPT
            else whiptail --msgbox "ZSH is already installed." --ok-button "Continue" 7 29 3>&1 1>&2 2>&3
            INSTALL_PROMPT
@@ -88,13 +88,21 @@ function INSTALL_PROMPT() {
 #This function simply ensures that it's been run with elevated permission. 
 
 function ROOT_CHECK() {
-                ## ROOT CHECK ##
-                if [ "$EUID" -ne 0 ]
-                then
-                whiptail --title "Not Enough Permissions" --fb --msgbox "This script needs to be run with sudo or as root." --ok-button Exit 10 78
-               EXIT
+               ## ROOT CHECK ##
+               # Are we root? If not use sudo
+               if [[ $EUID -eq 0 ]];then
+                   echo "You are root."
+               else
+                   echo "Sudo will be used for the install."
+                   # Check if it is actually installed
+                   # If it isn't, exit because the install cannot complete
+                   if [[ $(dpkg-query -s sudo) ]];then
+                       export SUDO="sudo"
+                   else
+                       echo "Please install sudo or run this as root."
+                       exit 1
+                   fi
                fi
-               echo "I passed the root check!"
                INSTALL_PROMPT
 }
 
