@@ -21,9 +21,9 @@
 #This function runs the install script for Oh My ZSH.  https://ohmyz.sh
 
 function INSTALL_OHMYZSH() {
-              curl -Lo install.sh https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh
-              chmod +x install.sh
-              ./install.sh --unattended
+              curl -Lo /tmp/install.sh https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh
+              chmod +x /tmp/install.sh
+              /tmp/install.sh --unattended
               sleep 2
               INSTALL_PROMPT
 }
@@ -68,7 +68,7 @@ function CHECK_ZSH() {
 
 function INSTALL_PROMPT() {
              START_selection=$(whiptail --title "Install and Setup ZSH" --menu "" --noitem --ok-button Select --cancel-button Exit 10 31 0\
-              "Install ZSH" "" "Install Oh My ZSH" "" "Set ZSH As Default Shell" "" "Change ZSH Theme" "" 3>&1 1>&2 2>&3)
+              "Install ZSH" "" "Install Oh My ZSH" "" "Set ZSH As Default Shell" "" "Change ZSH Theme" "" "Install Powerline Fonts" "" 3>&1 1>&2 2>&3)
              if [ "$START_selection" = "Install ZSH" ]; then
                    CHECK_ZSH
           elif [ "$START_selection" = "Install Oh My ZSH" ]; then
@@ -77,6 +77,8 @@ function INSTALL_PROMPT() {
                    SET_SHELL
           elif [ "$START_selection" = "Change ZSH Theme" ]; then
                    SET_THEME
+          elif [ "$START_selection" = "Install Powerline Fonts" ]; then
+                   INSTALL_FONTS
             fi
                    EXIT
 }
@@ -123,6 +125,21 @@ function SET_THEME() {
             fi
             INSTALL_PROMPT
 }
+
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
+#                       Insatll Powerline Fonts                      #
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
+function INSTALL_FONTS() {
+                if [ $(dpkg-query -W -f='${Status}' fonts-powerline 2>/dev/null | grep -c "ok installed") -eq 0 ];
+            then
+              (whiptail --msgbox "Powerline Fonts need to be installed." --ok-button "Continue" 7 43 3>&1 1>&2 2>&3); 
+                    $SUDO apt update && $SUDO apt install fonts-powerline -y
+                else
+                    whiptail --msgbox "Powerline Fonts are already installed." --ok-button "OK" 7 43 3>&1 1>&2 2>&3
+                fi
+                INSTALL_PROMPT
+}
+
 
 #*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
 #                            Exit function                           #
